@@ -1,0 +1,6 @@
+[submodule "i3altlayout"]
+	path = i3altlayout
+	url = git@github.com:antimike/i3altlayout
+[submodule "i3-wpd"]
+	path = i3-wpd
+	url = git@github.com:antimike/i3-wpd
