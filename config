@@ -204,7 +204,7 @@ bindsym $mod+9 workspace number $ws9
 bindsym $mod+0 workspace number $ws10
 bindsym $mod+Tab nop "previous-workspace"
 bindsym $mod+$alt+o focus output right
-bindsym $mod+n nop "new-workspace"
+bindsym $mod+Ctrl+n nop "new-workspace"
 focus_wrapping no
 
 # move focused container to workspace
@@ -267,6 +267,7 @@ no_focus [title="Firefox — Sharing Indicator"]
 #   workspace number 2; exec nm-online -q -t 5 && exec firefox; \
 #   workspace number 1"
 
+# TODO: Call i3-wpd script to allow workspace-specific backgrounds
 # i3-altlayout: Automatically optimizes split aspect ratios
 exec --no-startup-id "i3altlayout"
 
@@ -285,9 +286,8 @@ exec_always --no-startup-id variety >/dev/null 2>&1 &
 set $system_tray_startup ~/.config/i3/system-tray.sh
 exec_always --no-startup-id $system_tray_startup
 # Stalonetray: Toggle
-bindsym $mod+t exec /usr/local/bin/toggle-tray.sh
-bindsym $mod+t exec --no-startup-id xdotool windowunmap "$(xdotool search --class stalonetray)"
-bindsym $mod+Shift+t exec --no-startup-id xdotool windowmap "$(xdotool search --class stalonetray)"
+bindsym $mod+Shift+t exec --no-startup-id xdotool windowunmap "$(xdotool search --class stalonetray)"
+bindsym $mod+Shift exec --no-startup-id xdotool windowmap "$(xdotool search --class stalonetray)"
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
@@ -314,7 +314,7 @@ bindsym $mod+m exec i3-input -F 'mark %s' -P 'Mark window: '
 bindsym $mod+Shift+m exec i3-input -F 'mark --add %s' -P 'Add mark to window: '
 
 # Swap with marked window (prompt)
-bindsym $mod+Mod1+n exec i3-input -F 'swap container with mark %s' -P 'Swap container with mark: '
+bindsym $mod+$alt+n exec i3-input -F 'swap container with mark %s' -P 'Swap container with mark: '
 
 # Navigate to and focus on marked window
 bindsym $mod+n exec i3-input -F '[con_mark=%s] focus' -P 'Navigate to mark: '
