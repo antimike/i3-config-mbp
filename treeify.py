@@ -9,16 +9,21 @@ Use case: Assisting the creation of clean template files for config files of
 potentially unmanageable length and / or complexity
 """
 class Tree(dict):
-    def __init__(self, name, parent=None, birthday=0, max_generations=10):
-        if birthday > max_generations:
+    def __init__(self, name, parent=None, birthday=0, max_depth=10,
+            joiner=' '.join):
+        if birthday > max_depth:
             raise ValueError(
-                "birthday must be at most {max_generations} for this tree"
+                f"birthday must be at most {max_depth} for this tree"
             )
+        self._joiner = joiner
         self._parent = parent
         self._name = name
         self._birthday = birthday
-        self._generations = 0
-        self._max_generations = max_generations
+        self._depth = 0
+        self._max_depth = max_depth
+    @property
+    def max_depth(self):
+        return self._max_depth
     @property
     def parent(self):
         return self._parent
@@ -29,29 +34,34 @@ class Tree(dict):
     def birthday(self):
         return self._birthday
     @property
-    def generations(self):
-        return self._generations
+    def depth(self):
+        return self._depth
+    def join(self):
+        # Should this be handled with jq instead?
+        pass
+    def add_child(self, elem):
+        self[elem] = Tree(
+            self._name, birthday=self._birthday + 1, parent=self,
+            max_depth=self._max_depth, joiner=self._joiner
+        )
     def add_path(self, *nodes):
         if nodes is None or len(nodes) == 0:
+            # Throw exception?
             return
+        elif self.birthday >= self.max_depth:
+            self[self._joiner(nodes)] = None
         else:
-            # Note: Using self.get(...) doesn't work, since defaultdict only
-            # sets the default value on calls to __getitem__ (which is exposed
-            # as indexed accessors)
             if nodes[0] not in self:
-                self[nodes[0]] = Tree(
-                    self._name, birthday=self._birthday + 1, parent=self,
-                    max_generations=self._max_generations
-                )
+                self.add_child(nodes[0])
             self[nodes[0]].add_path(*nodes[1:])
-            self._generations = max(
-                self._generations, self[nodes[0]]._generations + 1
+            self._depth = max(
+                self._depth, self[nodes[0]]._depth + 1
             )
 
-if __name__ == main:
+if __name__ == "__main__":
     import sys, json
     split_lines = [l.split() for l in sys.stdin]
-    parsed = Tree("stdin", max_generations=30)
+    parsed = Tree("stdin", max_depth=2)
     for l in split_lines:
         parsed.add_path(*l)
     print(json.dumps(parsed))
