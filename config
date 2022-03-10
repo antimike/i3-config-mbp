@@ -10,6 +10,9 @@ gaps inner	5
 smart_borders no_gaps
 hide_edge_borders smart_no_gaps
 
+mouse_warping none
+focus_follows_mouse no
+
 # i3 config file (v4)
 
 set $mod Mod4
