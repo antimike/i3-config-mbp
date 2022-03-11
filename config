@@ -274,6 +274,9 @@ no_focus [title="Firefox — Sharing Indicator"]
 # i3-altlayout: Automatically optimizes split aspect ratios
 exec --no-startup-id "i3altlayout"
 
+# Picom
+exec_always --no-startup-id picom
+
 # Guake autoload
 exec_always --no-startup-id guake
 
@@ -282,7 +285,7 @@ exec_always --no-startup-id variety >/dev/null 2>&1 &
 
 # Polybar autoload
 #exec_always --no-startup-id $HOME/.config/polybar/launch.sh
-#exec --no-startup-id lxsession & 
+#exec --no-startup-id lxsession &
 #exec --no-startup-id ~/.compton/standard.sh
 
 # System tray: stalonetray
