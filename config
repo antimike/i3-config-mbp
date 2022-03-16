@@ -23,7 +23,7 @@ set $left h
 set $right l
 # set $term vbeterm
 set $term kitty
-# set $mediaplayer spotify
+set $mediaplayer cmus
 
 # font pango:Iosevka Aile 9
 font pango:monospace 10
@@ -51,29 +51,28 @@ bindsym $mod+Shift+p exec --no-startup-id passmenu
 
 # Audio
 set $refresh_i3status killall -SIGUSR1 i3status
-bindsym XF86AudioRaiseVolume exec --no-startup-id exec pactl set-sink-volume @DEFAULT_SINK@ +5% && $refresh_i3status
-bindsym XF86AudioLowerVolume exec --no-startup-id exec pactl set-sink-volume @DEFAULT_SINK@ -5% && $refresh_i3status
-bindsym XF86AudioMute        exec --no-startup-id exec pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
-bindsym XF86AudioMicMute     exec --no-startup-id exec pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
-bindsym XF86AudioPlay        exec --no-startup-id exec playerctl -p $mediaplayer play-pause && $refresh_i3status
-bindsym XF86AudioPause       exec --no-startup-id exec playerctl -p $mediaplayer pause && $refresh_i3status
-bindsym XF86AudioStop        exec --no-startup-id exec playerctl -p $mediaplayer stop && $refresh_i3status && refresh_i3status
-bindsym XF86AudioNext        exec --no-startup-id exec playerctl -p $mediaplayer next && $refresh_i3status
-bindsym XF86AudioPrev        exec --no-startup-id exec playerctl -p $mediaplayer previous && $refresh_i3status
-bindsym $mod+p exec --no-startup-id exec ~/.config/i3/bin/rofi-mediaplayer $mediaplayer
+set $change_volume_script ~/.config/i3/change-volume.bash
+# bindsym XF86AudioRaiseVolume exec --no-startup-id exec pactl set-sink-volume @DEFAULT_SINK@ +5% && $refresh_i3status
+# bindsym XF86AudioLowerVolume exec --no-startup-id exec pactl set-sink-volume @DEFAULT_SINK@ -5% && $refresh_i3status
+# bindsym XF86AudioMute        exec --no-startup-id exec pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
+# bindsym XF86AudioMicMute     exec --no-startup-id exec pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+bindsym XF86AudioRaiseVolume exec --no-startup-id $change_volume_script Master 2%+ && $refresh_i3status
+bindsym XF86AudioLowerVolume exec --no-startup-id $change_volume_script Master 2%- && $refresh_i3status
+bindsym XF86AudioMute        exec --no-startup-id $change_volume_script Master mute && $refresh_i3status
+bindsym XF86AudioMicMute     exec --no-startup-id $change_volume_script Capture nocap && $refresh_i3status
+bindsym XF86AudioPlay        exec --no-startup-id playerctl -p $mediaplayer play-pause && $refresh_i3status
+bindsym XF86AudioPause       exec --no-startup-id playerctl -p $mediaplayer pause && $refresh_i3status
+bindsym XF86AudioStop        exec --no-startup-id playerctl -p $mediaplayer stop && $refresh_i3status && refresh_i3status
+bindsym XF86AudioNext        exec --no-startup-id playerctl -p $mediaplayer next && $refresh_i3status
+bindsym XF86AudioPrev        exec --no-startup-id playerctl -p $mediaplayer previous && $refresh_i3status
+bindsym $mod+p exec --no-startup-id ~/.config/i3/bin/rofi-mediaplayer $mediaplayer
 
 # Brightness
-# bindsym XF86MonBrightnessUp exec --no-startup-id exec brightnessctl set +5%
-# bindsym XF86MonBrightnessDown exec --no-startup-id exec brightnessctl set 5%-
-# TODO: Look into brightnessctl as light replacement
-
-# Use light to adjust screen and keyboard backlight brightness.
-set $backlight_inc 1
-set $kbd_backlight "$(light -L | grep kbd | sed 's/^[[:space:]]//')"
-bindsym XF86KbdBrightnessDown exec --no-startup-id light -s $kbd_backlight -U $backlight_inc
-bindsym XF86KbdBrightnessUp exec --no-startup-id light -s $kbd_backlight -A $backlight_inc
-bindsym XF86MonBrightnessDown exec --no-startup-id light -U $backlight_inc
-bindsym XF86MonBrightnessUp exec --no-startup-id light -A $backlight_inc
+set $adjust_brightness_script ~/.config/i3/adjust-brightness.bash
+bindsym XF86MonBrightnessUp exec --no-startup-id $adjust_brightness_script +5%
+bindsym XF86MonBrightnessDown exec --no-startup-id $adjust_brightness_script 5%-
+bindsym XF86KbdBrightnessUp exec --no-startup-id $adjust_brightness_script -d "*kbd*" +5%
+bindsym XF86KbdBrightnessDown exec --no-startup-id $adjust_brightness_script -d "*kbd*" 5%-
 
 # use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -281,7 +280,10 @@ exec_always --no-startup-id picom
 exec_always --no-startup-id guake
 
 # Kitty floating terminal autoload
-exec_always --no-startup-id kitti3
+set $kitty_float_center_name kitty_center
+set $kitty_float_center_start kitti3 -n $kitty_center -p CC -s 0.5 0.3
+exec_always --no-startup-id kitti3 -n kitty_center -p CC -s 0.5 0.3
+bindsym $mod+t nop kitty_center
 
 # Variety autoload
 exec_always --no-startup-id variety >/dev/null 2>&1 &
@@ -292,11 +294,11 @@ exec_always --no-startup-id variety >/dev/null 2>&1 &
 #exec --no-startup-id ~/.compton/standard.sh
 
 # System tray: stalonetray
-set $system_tray_startup ~/.config/i3/system-tray.sh
-exec_always --no-startup-id $system_tray_startup
+# set $system_tray_startup ~/.config/i3/system-tray.sh
+# exec_always --no-startup-id $system_tray_startup
 # Stalonetray: Toggle
-bindsym $mod+Shift+t exec --no-startup-id xdotool windowunmap "$(xdotool search --class stalonetray)"
-bindsym $mod+Shift exec --no-startup-id xdotool windowmap "$(xdotool search --class stalonetray)"
+# bindsym $mod+Shift+t exec --no-startup-id xdotool windowunmap "$(xdotool search --class stalonetray)"
+# bindsym $mod+Shift exec --no-startup-id xdotool windowmap "$(xdotool search --class stalonetray)"
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
