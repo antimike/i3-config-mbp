@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 APPNAME="i3-brightness-adjust"

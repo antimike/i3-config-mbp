@@ -58,7 +58,7 @@ set $change_volume_script ~/.config/i3/change-volume.bash
 # bindsym XF86AudioMicMute     exec --no-startup-id exec pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 bindsym XF86AudioRaiseVolume exec --no-startup-id $change_volume_script Master 2%+ && $refresh_i3status
 bindsym XF86AudioLowerVolume exec --no-startup-id $change_volume_script Master 2%- && $refresh_i3status
-bindsym XF86AudioMute        exec --no-startup-id $change_volume_script Master mute && $refresh_i3status
+bindsym XF86AudioMute        exec --no-startup-id $change_volume_script Master toggle && $refresh_i3status
 bindsym XF86AudioMicMute     exec --no-startup-id $change_volume_script Capture nocap && $refresh_i3status
 bindsym XF86AudioPlay        exec --no-startup-id playerctl -p $mediaplayer play-pause && $refresh_i3status
 bindsym XF86AudioPause       exec --no-startup-id playerctl -p $mediaplayer pause && $refresh_i3status
@@ -281,7 +281,6 @@ exec_always --no-startup-id guake
 
 # Kitty floating terminal autoload
 set $kitty_float_center_name kitty_center
-set $kitty_float_center_start kitti3 -n $kitty_center -p CC -s 0.5 0.3
 exec_always --no-startup-id kitti3 -n kitty_center -p CC -s 0.5 0.3
 bindsym $mod+t nop kitty_center
 
