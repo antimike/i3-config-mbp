@@ -4,3 +4,6 @@
 [submodule "i3-wpd"]
 	path = i3-wpd
 	url = git@github.com:antimike/i3-wpd
+[submodule "betterlockscreen"]
+	path = betterlockscreen
+	url = https://github.com/betterlockscreen/betterlockscreen
