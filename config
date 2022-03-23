@@ -32,10 +32,10 @@ font pango:monospace 10
 default_border pixel 3
 default_floating_border pixel 3
 # class                 border  backgr. text    indicator child_border
-client.focused          #ffaf00 #cc5c00 #ffffff #ffdf11   #cc5c00
-client.focused_inactive #333333 #5f676a #ffffff #484e50   #5f676a
-client.unfocused        #333333 #222222 #888888 #292d2e   #222222
-client.urgent           #2f343a #d00000 #ffffff #d00000   #d00000
+client.focused #6699CC #6699CC #1B2B34 #6699CC
+client.focused_inactive #5FB3B3 #5FB3B3 #D8DEE9 #A7ADBA
+client.unfocused #343D46 #343D46 #D8DEE9 #343D46
+client.urgent #EC5f67 #EC5f67 #1B2B34 #EC5f67
 client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
 client.background       #ffffff
 
@@ -307,6 +307,15 @@ exec_always --no-startup-id variety >/dev/null 2>&1 &
 # finds out, if available)
 bar {
         status_command i3status
+  colors {
+    separator #65737E
+    background #1B2B34
+    statusline #D8DEE9
+    focused_workspace #6699CC #6699CC #1B2B34 #cccccc
+    active_workspace #5FB3B3 #5FB3B3 #1B2B34 #181715
+    inactive_workspace #343D46 #343D46 #D8DEE9 #AAAAAA
+    urgent_workspace #EC5f67 #EC5f67 #1B2B34 #FFFFFF
+  }
 }
 
 # Move window to scratchpad
