@@ -16,31 +16,33 @@ amixer set "$CONTROL_NAME" "$@" > /dev/null
 
 case "$CONTROL_NAME" in
     Master)     # Audio
-            ICON=audio
+            ICON=notification-audio-volume
             ;;
     Capture)    # Mic
-            ICON=mic
+            ICON=notification-microphone-sensitivity
             ;;
 esac
 
 case "$STATUS" in
         off|mute)
-                if [[ "$ICON" == "audio" ]]; then
-                        ICON="audio-volume-muted"
-                elif [[ "$ICON" == "mic" ]]; then
-                        ICON="mic-off"
-                fi
+                ICON="${ICON}-muted"
                 ;;
         on)     # Control is on
-                if [[ ${VOLUME%%%} -lt 33 ]]; then
-                        ICON="${ICON}-volume-low"
-                elif [[ ${VOLUME%%%} -lt 67 ]]; then
-                        ICON="${ICON}-volume-medium"
-                elif [[ ${VOLUME%%%} -le 100 ]]; then
-                        ICON="${ICON}-volume-high"
+                typeset -i vol=${VOLUME%%%}
+                if [[ $vol -lt 33 ]]; then
+                        ICON="${ICON}-low"
+                elif [[ $vol -lt 67 ]]; then
+                        ICON="${ICON}-medium"
+                elif [[ $vol -le 100 ]]; then
+                        ICON="${ICON}-high"
                 else
                         # Should never occur
                         ICON=system-error
+                fi
+
+                # Clear icon if we just changed
+                if [[ $vol -eq 33 || $vol -eq 67 ]]; then
+                        dunstctl close
                 fi
                 ;;
         *)      # Status isn't "on", "off", or "mute"...
@@ -50,9 +52,11 @@ case "$STATUS" in
 esac
 
 msgTag="set-${ICON}"
+msgID=1002
 dunstify -a "$APPNAME" -u low -i "${ICON}" \
         -h string:x-dunst-stack-tag:$msgTag \
         -h int:value:"${VOLUME%%%}" \
+        -r $msgID \
         "${VOLUME}"
 
 # Play the volume changed sound

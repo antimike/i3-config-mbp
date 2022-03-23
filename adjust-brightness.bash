@@ -5,31 +5,41 @@ brightnessctl set "$@" >/dev/null
 
 case "$*" in
     *kbd*)
-        ICON=notification-keyboard-brightness
+        ICON=keyboard-brightness-symbolic
         LEVEL=$(brightnessctl -d "*kbd*" info | grep -o "[0-9]\+%")
         ;;
     *)
-        ICON=notification-display-brightness
+        ICON=display-brightness
         LEVEL=$(brightnessctl info | grep -o "[0-9]\+%")
-        if [[ ${LEVEL%%%} -eq 0 ]]; then
+        typeset -i level=${LEVEL%%%}
+
+        if [[ $level -eq 0 ]]; then
             ICON="${ICON}-off"
-        elif [[ ${LEVEL%%%} -lt 33 ]]; then
+        elif [[ $level -lt 33 ]]; then
             ICON="${ICON}-low"
-        elif [[ ${LEVEL%%%} -lt 67 ]]; then
+        elif [[ $level -lt 67 ]]; then
             ICON="${ICON}-medium"
-        elif [[ ${LEVEL%%%} -lt 100 ]]; then
+        elif [[ $level -lt 100 ]]; then
             ICON="${ICON}-high"
-        elif [[ ${LEVEL%%%} -eq 100 ]]; then
+        elif [[ $level -eq 100 ]]; then
             ICON="${ICON}-full"
         else
             # Should never occur
             ICON=system-error
         fi
+        ICON="${ICON}-symbolic"
+
+        # Clear icon if we just changed
+        if [[ $level -eq 0 || $level -eq 33 || $level -eq 67 || $level -eq 100 ]]; then
+                dunstctl close
+        fi
         ;;
 esac
 
 msgTag="set-${ICON}"
+msgID=1001
 dunstify -a "$APPNAME" -u low -i "$ICON" \
     -h string:x-dunst-stack-tag:$msgTag \
     -h int:value:"${LEVEL%%%}" \
+    -r $msgID \
     "$LEVEL"
