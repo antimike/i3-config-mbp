@@ -1,4 +1,51 @@
 # i3-gaps
+
+set $mod Mod4
+set $alt Mod1
+set $up k
+set $down j
+set $left h
+set $right l
+set $term kitty
+set $mediaplayer cmus
+
+font Iosevka-Nerd-Font-Complete:mono 10
+
+# Border size and corner radius: defined in Xresources
+set_from_resource $border_size i3wm.border_size 3
+set_from_resource $floating_border i3wm.floating_border_size 2
+set_from_resource $minimal_border i3wm.minimal_border_size 1
+set_from_resource $corner_radius i3wm.corner_radius 10
+
+for_window [tiling] border pixel 3
+for_window [floating] border pixel 3
+for_window [title="Firefox — Sharing Indicator"] border pixel $minimal_border, sticky enable, move position 20 ppt -5 px
+
+# Style and colors
+default_border pixel 3
+default_floating_border pixel 3
+
+# Instructions from PyWal README
+# Set colors from Xresources
+# Change 'color7' and 'color2' to whatever colors you want i3 to use
+# from the generated scheme.
+# NOTE: The '#f0f0f0' in the lines below is the color i3 will use if
+# it fails to get colors from Xresources.
+set_from_resource $fg i3wm.color7 #f0f0f0
+set_from_resource $bg i3wm.color2 #f0f0f0
+
+# class                 border  backgr. text indicator child_border
+client.focused          $bg     $bg     $fg  $bg       $bg
+client.focused_inactive $bg     $bg     $fg  $bg       $bg
+client.unfocused        $bg     $bg     $fg  $bg       $bg
+client.urgent           $bg     $bg     $fg  $bg       $bg
+client.placeholder      $bg     $bg     $fg  $bg       $bg
+
+client.background       $bg
+
+# PROTIP: You can also dynamically set dmenu's colors this way:
+# bindsym $mod+d exec dmenu_run -nb "$fg" -nf "$bg" -sb "$bg" -sf "$fg"
+
 # Gaps
 gaps top	15
 gaps left	5
@@ -157,6 +204,10 @@ bindsym XF86MonBrightnessDown exec --no-startup-id $adjust_brightness_script 1%-
 bindsym XF86KbdBrightnessUp exec --no-startup-id $adjust_brightness_script -d "*kbd*" +1%
 bindsym XF86KbdBrightnessDown exec --no-startup-id $adjust_brightness_script -d "*kbd*" 1%-
 
+# Dunst (notifications)
+bindsym $mod+backslash exec dunstctl close
+bindsym $mod+bracketright exec dunstctl history-pop
+
 # use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
@@ -167,9 +218,10 @@ bindsym $mod+Return exec i3-sensible-terminal
 bindsym $mod+Shift+q kill
 
 # execute command
-set $rofi exec rofi -dpi -modi drun -show drun -show-icons -drun-match-fields name
+set $rofi rofi -modi drun -show drun -show-icons -drun-match-fields name
+set $rofi_find rofi -modi window -show window -window-thumbnail -icon-theme "Papirus" -show-icons
 bindsym $mod+o      exec --no-startup-id $rofi
-bindsym XF86LaunchA exec --no-startup-id $rofi
+bindsym XF86LaunchA exec --no-startup-id $rofi_find
 bindsym $mod+Shift+d exec --no-startup-id $rofi
 
 # change focus
@@ -313,7 +365,7 @@ bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
 
 # Redshift: adjust screen palette for location / time
-exec --no-startup-id ~/.config/i3/start-redshift.bash
+exec --no-startup-id ~/.config/i3/bin/start-redshift.bash
 
 # xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
 # screen before suspend. Use loginctl lock-session to lock your screen.
@@ -341,11 +393,9 @@ bindsym $mod+Shift+i nop "workspace-info"
 
 # Random rules
 no_focus [window_type="splash"]
-for_window [tiling] border pixel 3
 for_window [class="Nm-connection-editor"] floating enable
 for_window [class="Shadow"] fullscreen enable
 for_window [window_role="PictureInPicture"] floating enable
-for_window [title="Firefox — Sharing Indicator"] border pixel 1, sticky enable, move position 20 ppt -5 px
 no_focus [title="Firefox — Sharing Indicator"]
 
 # Start stuff
@@ -361,7 +411,7 @@ no_focus [title="Firefox — Sharing Indicator"]
 exec --no-startup-id "i3altlayout"
 
 # Picom
-exec_always --no-startup-id picom
+exec_always --no-startup-id picom --corner-radius $corner_radius
 
 # Guake autoload
 exec_always --no-startup-id guake
@@ -372,34 +422,26 @@ exec_always --no-startup-id kitti3 -n kitty_center -p CC -s 0.5 0.3
 bindsym $mod+t nop kitty_center
 
 # Variety autoload
-exec_always --no-startup-id variety >/dev/null 2>&1 &
+# exec_always --no-startup-id variety >/dev/null 2>&1 &
+exec_always --no-startup-id ~/.fehbg &
 
 # Polybar autoload
-#exec_always --no-startup-id $HOME/.config/polybar/launch.sh
-#exec --no-startup-id lxsession &
-#exec --no-startup-id ~/.compton/standard.sh
-
-# System tray: stalonetray
-# set $system_tray_startup ~/.config/i3/system-tray.sh
-# exec_always --no-startup-id $system_tray_startup
-# Stalonetray: Toggle
-# bindsym $mod+Shift+t exec --no-startup-id xdotool windowunmap "$(xdotool search --class stalonetray)"
-# bindsym $mod+Shift exec --no-startup-id xdotool windowmap "$(xdotool search --class stalonetray)"
+exec_always --no-startup-id ~/.config/i3/bin/polybar.sh
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
-bar {
-        status_command i3status
-  colors {
-    separator #65737E
-    background #1B2B34
-    statusline #D8DEE9
-    focused_workspace #6699CC #6699CC #1B2B34 #cccccc
-    active_workspace #5FB3B3 #5FB3B3 #1B2B34 #181715
-    inactive_workspace #343D46 #343D46 #D8DEE9 #AAAAAA
-    urgent_workspace #EC5f67 #EC5f67 #1B2B34 #FFFFFF
-  }
-}
+# bar {
+#         status_command i3status
+#   colors {
+#     separator #65737E
+#     background #1B2B34
+#     statusline #D8DEE9
+#     focused_workspace #6699CC #6699CC #1B2B34 #cccccc
+#     active_workspace #5FB3B3 #5FB3B3 #1B2B34 #181715
+#     inactive_workspace #343D46 #343D46 #D8DEE9 #AAAAAA
+#     urgent_workspace #EC5f67 #EC5f67 #1B2B34 #FFFFFF
+#   }
+# }
 
 # Move window to scratchpad
 bindsym $mod+Ctrl+x move window scratchpad
@@ -451,6 +493,7 @@ bindsym $mod+Mod1+Shift+l move window to workspace next
 bindsym $mod+Mod1+r exec i3-input -F 'rename workspace to %s' -P 'New name: '
 
 # Perma-float windows
+for_window [class="Yad" title="yad-calendar"] floating enable
 for_window [class="Inkscape"] floating enable
 for_window [title="Inkscape insert text"] floating enable
 for_window [title="Question"] floating enable
