@@ -19,10 +19,8 @@ case "$*" in
             ICON="${ICON}-low"
         elif [[ $level -lt 67 ]]; then
             ICON="${ICON}-medium"
-        elif [[ $level -lt 100 ]]; then
+        elif [[ $level -le 100 ]]; then
             ICON="${ICON}-high"
-        elif [[ $level -eq 100 ]]; then
-            ICON="${ICON}-full"
         else
             # Should never occur
             ICON=system-error
