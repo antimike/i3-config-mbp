@@ -1,0 +1,47 @@
+#!/bin/bash
+
+me="$(readlink -f "$0")"
+timeout=600
+notify=$((timeout/30))
+
+configure() {
+    xset s $((timeout - notify)) $notify
+    xset dpms $((timeout * 2)) $((timeout * 22 / 10)) $((timeout * 24 / 10))
+}
+dimmer() {
+    systemctl --user $1 xss-dimmer@$notify.service
+}
+
+case "$1" in
+    start)
+        configure
+        exec xss-lock --session=${XDG_SESSION_ID} --notifier="$me notify" --transfer-sleep-lock "$me" lock
+        ;;
+    dim|notify)
+        echo "notify: start (idle: $(xprintidle))"
+        trap 'echo notify: user activity; dimmer stop; kill %% 2> /dev/null; exit 0' HUP  # user activity
+        trap 'echo notify: locker started; kill %% 2> /dev/null; exit 0' TERM # locker started
+        dimmer start
+        sleep infinity &
+        wait
+        echo "notify: end"
+        ;;
+    lock)
+        echo "lock: lock screen (idle: $(xprintidle))"
+        # Something may have meddled with screensaver settings
+        configure
+        # Pause music player and notifications
+        playerctl -a pause
+        dunstctl set-paused true
+        # Then, lock screen
+        i3lock -n -e -i $HOME/.cache/i3/current-wallpaper.png -t -f
+        # Alternative if we prefer videos:
+        # XSECURELOCK_SAVER=saver_mpv
+        # XSECURELOCK_LIST_VIDEOS_COMMAND="ls -1 ~/.config/i3/wallpapers/*.mp4"
+        # xsecurelock
+        echo "lock: unlock screen"
+        # After unlocking screen, stop dimmer, restore notifications
+        dimmer stop
+        dunstctl set-paused false
+        ;;
+esac
