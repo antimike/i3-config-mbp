@@ -1,0 +1,20 @@
+#!/bin/zsh -f
+# Data source for FZF wifi widget
+
+case $1 in
+        connect)
+                shift
+                nmcli -a dev wifi con "$*"
+                ;;
+        known)
+                nmcli
+        *)
+                # Get colorized info on all nearby networks from nmcli
+                local nmcli_fields="SSID,SIGNAL,BARS,FREQ,IN-USE"
+                local -a fields=(SSID SIGNAL BARS FREQ IN-USE)
+                nmcli -t -c yes -f ${(j:,:)fields} dev wifi list 2>/dev/null \
+                        | column -s: -o ${FZF_DELIMITER:-'\t'} -t
+
+# Time delay between nmcli rescans (milliseconds)
+local -i rescan_delay="${rescan_delay:-2000}"
+

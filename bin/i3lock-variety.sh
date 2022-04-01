@@ -1,5 +1,5 @@
 #!/bin/bash
-# Calls i3lock-color with background image identicl to Variety's current wallpaper
+# Calls i3lock-color with background image identical to Variety's current wallpaper
 # Adds blur and lock icon / text
 LOCK_ICON="${LOCK_ICON:-/home/hactar/Source/i3lock-fancy/icons/lock.png}"
 LOCK_FONT="${LOCK_FONT:-"$(convert -list font | awk "{ a[NR] = \$2 } /family: $(fc-match sans -f "%{family}\n")/ {print a[NR-1]; exit}")"}"

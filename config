@@ -370,9 +370,6 @@ bindsym $mod+Shift+n nop "move-to-new-workspace"
 bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
 
-# Redshift: adjust screen palette for location / time
-exec --no-startup-id ~/.config/i3/bin/start-redshift.bash
-
 # xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
 # screen before suspend. Use loginctl lock-session to lock your screen.
 set $lock_command betterlockscreen -l dim
@@ -512,3 +509,5 @@ for_window [title="Medit"] floating enable
 for_window [title="Octave"] floating enable
 for_window [title="Figure"] floating enable
 for_window [title="Guake!"] floating enable
+
+# vim:ft=conf
