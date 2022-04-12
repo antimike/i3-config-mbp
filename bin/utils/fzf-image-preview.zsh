@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 # Generates an image preview for FZF widgets
 
 declare FZF_TERMINAL_LINES FZF_TERMINAL_COLUMNS CURSOR_X CURSOR_Y

@@ -17,7 +17,6 @@ declare -x SIZE=532x365
 declare -x POSITION="+0+0"
 declare -x FONT_SIZE=38
 declare -x BG_COLOR="#ffffff"
-declare -x FG_COLOR="#000000"
 declare -x PREVIEW_TEXT="ABCDEFGHIJKLM\nNOPQRSTUVWXYZ\nabcdefghijklm\nnopqrstuvwxyz\n1234567890\n!@$\%()\{\}[]"
 
 declare -r -x IMAGE_CACHE_DIR=~/.cache/fzf-previews/fonts

@@ -1,15 +1,38 @@
 #!/bin/bash
 # Sets background image for slick-greeter
 
-LIGHTDM_BACKGROUND=/usr/share/wallpapers/background.jpg
-BACKGROUNDS=/home/hactar/.local/share/wallpapers/Wallpapers
+WALLPAPERS="${WALLPAPERS:-${XDG_GREETER_DATA_DIR}/wallpapers}"
+LIGHTDM_BACKGROUND="${LIGHTDM_BACKGROUND:-${XDG_GREETER_DATA_DIR}/background.jpg}"
+BACKGROUND_HISTORY="${LIGHTDM_BACKGROUND%.*}.history"
 
-pick="${BACKGROUNDS}/$(ls "$BACKGROUNDS" | shuf -n 1)"
-case "${pick##*.}" in
-        jpg)
-                cp "$pick" "$LIGHTDM_BACKGROUND"
-                ;;
-        *)
-                convert "$pick" "$LIGHTDM_BACKGROUND"
-                ;;
-esac
+error() {
+        local -i code=$1 && shift || local -i code=-1
+        printf '%s\n' "$@" >&2
+        exit $code
+}
+
+recover_backup() {
+        if [[ -e "${LIGHTDM_BACKGROUND}.backup" ]]; then
+                mv "${LIGHTDM_BACKGROUND}.backup" "${LIGHTDM_BACKGROUND}"
+        fi
+        error "$@"
+}
+
+if [[ ! -d "$WALLPAPERS" ]]; then
+        error 1 "Could not find wallpaper dir '${WALLPAPERS}'"
+fi
+
+NEW_BACKGROUND="${WALLPAPERS}/$(ls -- "$WALLPAPERS" | shuf -n 1)"
+
+touch -- "$NEW_BACKGROUND" ||
+        error 2 "Chosen background does not exist (is wallpaper dir '${WALLPAPERS}' empty?)"
+
+if [[ -e "$LIGHTDM_BACKGROUND" ]]; then
+        mv -- "$LIGHTDM_BACKGROUND" "${LIGHTDM_BACKGROUND}.backup"
+fi
+
+ln -s  -- "$NEW_BACKGROUND" "$LIGHTDM_BACKGROUND" ||
+        recover_backup 3 \
+                "Failed to link LightDM background '${LIGHTDM_BACKGROUND}' to '${NEW_BACKGROUND}'" \
+                "Attempting to recover backup"
+printf '%s\t%s\n' "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" "$NEW_BACKGROUND" >>"$BACKGROUND_HISTORY"
