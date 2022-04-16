@@ -184,6 +184,7 @@ focus_follows_mouse no
 
 # dmenu for passwords: copies password into clipboard
 bindsym $mod+Shift+p exec --no-startup-id passmenu
+bindsym $mod+p exec --no-startup-id passmenu --type
 
 # Audio
 # TODO: Implement script to choose which controls keys should bind to (i.e., basic "mixer")
@@ -200,7 +201,6 @@ bindsym XF86AudioPause       exec --no-startup-id playerctl -p $mediaplayer paus
 bindsym XF86AudioStop        exec --no-startup-id playerctl -p $mediaplayer stop && $refresh_i3status && refresh_i3status
 bindsym XF86AudioNext        exec --no-startup-id playerctl -p $mediaplayer next && $refresh_i3status
 bindsym XF86AudioPrev        exec --no-startup-id playerctl -p $mediaplayer previous && $refresh_i3status
-bindsym $mod+p exec --no-startup-id ~/.config/i3/bin/rofi-mediaplayer $mediaplayer
 
 # Brightness
 set $adjust_brightness_script ~/.config/i3/bin/adjust-brightness.bash
