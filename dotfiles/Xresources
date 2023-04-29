@@ -1,0 +1,23 @@
+Xft.dpi: 227
+Xft.antialias:          1
+Xft.hinting:            1
+Xft.rgba:               rgb
+Xft.hintstyle:          hintslight
+Xft.lcdfilter:          lcddefault
+
+i3wm.border_size: 3
+i3wm.floating_border_size: 2
+i3wm.minimal_border_size: 1
+i3wm.corner_radius: 15
+
+*icons: Papirus-Dark
+
+!xterm*font: terminus-12
+!xterm*font: *-terminus-*-*-*-14-*
+!xterm*font: XTerm.VT100.font5
+xterm*faceName: Monospace
+xterm*faceSize: 12
+xterm*eightBitInput: false
+xterm*vt100.translations: #override \
+				Ctrl Alt <Key> C: copy-selection(CLIPBOARD) \n\
+				Ctrl Alt <Key> V: insert-selection(CLIPBOARD)
