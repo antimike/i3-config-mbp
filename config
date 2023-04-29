@@ -6,10 +6,11 @@ set $up k
 set $down j
 set $left h
 set $right l
-set $term kitty
+set $i3_dir ~/.config/i3
+set $term kitty --session ~/.config/kitty/sessions/main.conf --instance-group MAIN --listen-on=unix:/tmp/kitty-main
 set $mediaplayer cmus
 
-font Iosevka-Nerd-Font-Complete:mono 10
+font Iosevka-Nerd-Font-Complete-Mono 12
 
 # Border size and corner radius: defined in Xresources
 set_from_resource $border_size i3wm.border_size 3
@@ -19,9 +20,12 @@ set_from_resource $corner_radius i3wm.corner_radius 10
 set_from_resource $dpi Xft.dpi 227
 set_from_resource $icons i3wm.icons Papirus-Dark
 
-for_window [tiling] border pixel 3
-for_window [floating] border pixel 3
+for_window [tiling] border pixel 0
+for_window [floating] border pixel 0
 for_window [title="Firefox — Sharing Indicator"] border pixel $minimal_border, sticky enable, move position 20 ppt -5 px
+for_window [class="dropdown"] border pixel 0
+for_window [class="dropdown" tiling] gaps vertical 0
+for_window [class="dropdown" tiling] gaps horizontal 0
 
 # Style and colors
 default_border pixel 3
@@ -34,7 +38,7 @@ default_floating_border pixel 3
 # NOTE: The '#f0f0f0' in the lines below is the color i3 will use if
 # it fails to get colors from Xresources.
 set_from_resource $fg i3wm.color7 #f0f0f0
-set_from_resource $bg i3wm.color2 #f0f0f0
+set_from_resource $bg i3wm.color3 #f0f0f0
 
 # class                 border  backgr. text indicator child_border
 client.focused          $bg     $bg     $fg  $bg       $bg
@@ -45,17 +49,15 @@ client.placeholder      $bg     $bg     $fg  $bg       $bg
 
 client.background       $bg
 
-# PROTIP: You can also dynamically set dmenu's colors this way:
-# bindsym $mod+d exec dmenu_run -nb "$fg" -nf "$bg" -sb "$bg" -sf "$fg"
-
 # Gaps
-gaps top	15
+gaps top	5
 gaps left	5
 gaps right	5
 gaps inner	5
+gaps outer 0
 #smart_gaps on
 #smart_gaps inverse_outer
-# smart_borders on
+smart_borders on
 smart_borders no_gaps
 hide_edge_borders smart_no_gaps
 
@@ -217,7 +219,7 @@ bindsym $mod+bracketright exec dunstctl history-pop
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec i3-sensible-terminal
+bindsym $mod+Return exec $term
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -362,7 +364,7 @@ bindsym $mod+Shift+8 move container to workspace number $ws8
 bindsym $mod+Shift+9 move container to workspace number $ws9
 bindsym $mod+Shift+0 move container to workspace number $ws10
 bindsym $mod+Shift+o  move workspace to output right
-bindsym $mod+Shift+n nop "move-to-new-workspace"
+# bindsym $mod+Shift+n nop "move-to-new-workspace"
 
 # reload/restart
 # TODO: Figure out WTF
@@ -380,15 +382,8 @@ bindsym $mod+Escape exec "loginctl lock-session"
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
 bindsym $mod+Shift+Ctrl+e exec "i3-msg exit"
 
-# Lock screen and print screen
-# TODO: Investigate xset and Print bindings on macbook
-# bindsym XF86ScreenSaver exec --no-startup-id exec xset s activate
-# bindsym $mod+Delete exec --no-startup-id exec xset s activate
 # bindsym Print exec --no-startup-id exec ~/.config/i3/bin/screenshot window
 # bindsym $mod+Print exec --no-startup-id exec ~/.config/i3/bin/screenshot desktop
-
-# Quake window
-bindsym $mod+grave nop "quake-console:$term:QuakeConsoleNeedsUniqueName:0.3"
 
 # Get info about container/workspace
 bindsym $mod+i nop "container-info"
@@ -399,52 +394,39 @@ no_focus [window_type="splash"]
 for_window [class="Nm-connection-editor"] floating enable
 for_window [class="Shadow"] fullscreen enable
 for_window [window_role="PictureInPicture"] floating enable
-no_focus [title="Firefox — Sharing Indicator"]
 
 # Start stuff
-# TODO: Replace default layout-loading code from cloned repo with my own (ewwww...emacs)
-# exec_always --no-startup-id exec systemctl --user start --no-block i3-session.target
-# exec --no-startup-id exec i3-msg "\
-#   workspace number 1; append_layout ~/.config/i3/ws-emacs.json; exec exec emacs; exec exec $term; exec exec $term; \
-#   workspace number 2; exec nm-online -q -t 5 && exec firefox; \
-#   workspace number 1"
 
 # TODO: Call i3-wpd script to allow workspace-specific backgrounds
 # i3-altlayout: Automatically optimizes split aspect ratios
 exec --no-startup-id "i3altlayout"
 
 # Picom
-exec_always --no-startup-id picom --corner-radius $corner_radius
+exec_always --no-startup-id picom
 
 # Guake autoload
 exec_always --no-startup-id guake
 
+set $kitty_launcher /home/hactar/.config/kitty/bin/launch_session
 # Kitty floating terminal autoload
-set $kitty_float_center_name kitty_center
-exec_always --no-startup-id kitti3 -n kitty_center -p CC -s 0.5 0.3
-bindsym $mod+t nop kitty_center
+exec_always --no-startup-id $kitty_launcher media --i3 -n kitty_media -p LC -s 0.35 1.0
+bindsym $mod+t nop kitty_media
 
-# Variety autoload
-# exec_always --no-startup-id variety >/dev/null 2>&1 &
-exec_always --no-startup-id ~/.fehbg &
+# Notes floating terminal
+exec_always --no-startup-id $kitty_launcher notes --i3 -n kitty_notepad -p CC -s 0.75 0.75
+bindsym $mod+Shift+n nop kitty_notepad
+
+# Wallpaper
+# exec_always --no-startup-id ~/.config/i3/bin/set-background.bash
+# exec_always --no-startup-id ~/.fehbg &
+# exec_always --no-startup-id ~/.config/i3/bin/set-lightdm-background.bash
+bindsym $mod+Shift+w exec ~/.config/i3/bin/set-background.bash
 
 # Polybar autoload
-exec_always --no-startup-id ~/.config/i3/bin/polybar.sh
-
-# Start i3bar to display a workspace bar (plus the system information i3status
-# finds out, if available)
-# bar {
-#         status_command i3status
-#   colors {
-#     separator #65737E
-#     background #1B2B34
-#     statusline #D8DEE9
-#     focused_workspace #6699CC #6699CC #1B2B34 #cccccc
-#     active_workspace #5FB3B3 #5FB3B3 #1B2B34 #181715
-#     inactive_workspace #343D46 #343D46 #D8DEE9 #AAAAAA
-#     urgent_workspace #EC5f67 #EC5f67 #1B2B34 #FFFFFF
-#   }
-# }
+# TODO: Make this Suck Less (TM) by replacing the sed bs in pywal.sh with dynamically-sourced colors in polybar config
+exec_always --no-startup-id ~/.config/polybar/launch.sh --cuts
+exec_always --no-startup-id ~/.config/polybar/cuts/scripts/pywal.sh
+exec_always --no-startup-id ~/.config/i3/bin/set-lockscreen.bash
 
 # Move window to scratchpad
 bindsym $mod+Ctrl+x move window scratchpad
@@ -497,17 +479,7 @@ bindsym $mod+Mod1+r exec i3-input -F 'rename workspace to %s' -P 'New name: '
 
 # Perma-float windows
 for_window [class="Yad" title="yad-calendar"] floating enable
-for_window [class="Inkscape"] floating enable
 for_window [title="Inkscape insert text"] floating enable
-for_window [title="Question"] floating enable
-for_window [title="Zoom"] floating enable
-for_window [title="Chat"] floating enable
-for_window [title="Participants"] floating enable
-for_window [class="FreeFem++"] floating enable
-for_window [title="FreeFem++"] floating enable
-for_window [title="Medit"] floating enable
-for_window [title="Octave"] floating enable
-for_window [title="Figure"] floating enable
 for_window [title="Guake!"] floating enable
 
 # vim:ft=conf
