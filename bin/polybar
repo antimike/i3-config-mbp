@@ -1,5 +1,6 @@
 #!/bin/sh
 
+conf="$HOME/.config/i3/dotfiles/polybar.conf"
 export DPI=$(xrdb -query | sed -nE 's/^Xft\.dpi:\s*//p')
 export HEIGHT=$((18 * DPI / 96))
 
@@ -13,21 +14,21 @@ NMONITORS=$(echo $MONITORS | wc -w)
 PRIMARY=${PRIMARY:-${MONITORS%% *}}
 
 awk 'BEGIN { i=0 } ($4 == "/" && $3 !~ /^0:/) {print "mount-"i" = "$5; i++}' /proc/self/mountinfo \
-    > $XDG_RUNTIME_DIR/i3/polybar-filesystems.conf
+	>$XDG_RUNTIME_DIR/i3/polybar-filesystems.conf
 
 case $NMONITORS in
-    1)
-        MONITOR=$PRIMARY polybar --reload alone &
-        systemd-notify --status="Single polybar instance running on $PRIMARY"
-        ;;
-    *)
-        MONITOR=$PRIMARY polybar --reload primary &
-        for MONITOR in ${MONITORS}; do
-            [ $MONITOR != $PRIMARY ] || continue
-            MONITOR=$MONITOR polybar --reload secondary &
-        done
-        systemd-notify --status="$NMONITORS polybar instances running"
-        ;;
+1)
+	MONITOR=$PRIMARY polybar -c "$conf" --reload alone &
+	systemd-notify --status="Single polybar instance running on $PRIMARY"
+	;;
+*)
+	MONITOR=$PRIMARY polybar -c "$conf" --reload primary &
+	for MONITOR in ${MONITORS}; do
+		[ $MONITOR != $PRIMARY ] || continue
+		MONITOR=$MONITOR polybar -c "$conf" --reload secondary &
+	done
+	systemd-notify --status="$NMONITORS polybar instances running"
+	;;
 esac
 
 systemd-notify --ready
