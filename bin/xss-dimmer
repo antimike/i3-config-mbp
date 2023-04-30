@@ -1,23 +1,25 @@
-#!/usr/bin/env python3
-
+#!/usr/bin/python3
 """Simple dimmer for xss-lock.
 
 It dim the screen using a provided delay and display a countdown. It
 will stop itself when the locker window is mapped.
 """
-
 # It assumes we are using a compositor.
-
-import gi
-
-gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, Gdk, GLib, GdkPixbuf
-import cairo
 import argparse
 import threading
-from Xlib import display, X
+
+import cairo
+import gi
+from gi.repository import Gdk
+from gi.repository import GdkPixbuf
+from gi.repository import GLib
+from gi.repository import Gtk
+from Xlib import display
+from Xlib import X
 from Xlib.error import BadWindow
 from Xlib.protocol.event import MapNotify
+
+gi.require_version("Gtk", "3.0")
 
 
 def on_xevent(source, condition, xdisplay, locker):

@@ -1,7 +1,5 @@
-#!/usr/bin/env python3
-
+#!/usr/bin/python3
 """Build a multi screen wallpaper."""
-
 # Alternative:
 # curl -s https://bzamayo.com/extras/apple-tv-screensavers.json \
 #   | jq -r '.data[].screensavers[].videoURL' \
@@ -10,25 +8,22 @@
 #        xwinwrap -b -s -fs -st -sp -nf -ov -- \
 #        mpv -wid WID -really-quiet -framedrop=vo --no-audio --panscan=1.0 \
 #                     -loop-playlist=inf
-
 # Alternative:
 # https://moewalls.com/category/pixel-art/
-
-import os
-import sys
-import random
 import argparse
-import tempfile
 import collections
-import itertools
-import logging
-import logging.handlers
 import inspect
+import itertools
+import logging.handlers
+import os
+import random
+import sys
+import tempfile
 
-from Xlib import display
-from Xlib.ext import randr
 from PIL import Image
 from systemd import journal
+from Xlib import display
+from Xlib.ext import randr
 
 
 logger = logging.getLogger("wallpaper")
@@ -42,18 +37,22 @@ def get_outputs():
     d = display.Display()
     screen = d.screen()
     window = screen.root.create_window(0, 0, 1, 1, 1, screen.root_depth)
-    background = Image.new("RGB", (screen.width_in_pixels, screen.height_in_pixels))
+    background = Image.new(
+        "RGB", (screen.width_in_pixels, screen.height_in_pixels))
 
     # Query randr extension
     outputs = []
     screen_resources = randr.get_screen_resources_current(window)
     for output in screen_resources.outputs:
-        output_info = randr.get_output_info(window, output, screen_resources.timestamp)
+        output_info = randr.get_output_info(
+            window, output, screen_resources.timestamp)
         if output_info.crtc == 0:
             continue
-        crtc_info = randr.get_crtc_info(window, output_info.crtc, output_info.timestamp)
+        crtc_info = randr.get_crtc_info(
+            window, output_info.crtc, output_info.timestamp)
         outputs.append(
-            Rectangle(crtc_info.x, crtc_info.y, crtc_info.width, crtc_info.height)
+            Rectangle(crtc_info.x, crtc_info.y,
+                      crtc_info.width, crtc_info.height)
         )
 
     for o in outputs:
@@ -62,8 +61,8 @@ def get_outputs():
 
 
 def get_covering_rectangles(outputs):
-    """Compute all possible groups of covering boxes for the provided
-    outputs. For each group, an output is included in exactly one box.
+    """Compute all possible groups of covering boxes for the provided outputs.
+    For each group, an output is included in exactly one box.
 
     >>> gcr = get_covering_rectangles
     >>> gcr([Rectangle(0, 0, 100, 100)])
@@ -136,12 +135,14 @@ def get_random_images(directory, number):
 
     for image in images:
         directory_len = len(directory) + 1
-        logger.debug("image: %s %s×%s", image.filename[directory_len:], *image.size)
+        logger.debug("image: %s %s×%s",
+                     image.filename[directory_len:], *image.size)
     return images
 
 
 def get_best_parts(groups, images, ratio_score=100, scale_score=60, wallpaper_score=2):
-    """Find optimal association for images for the groups of covering rectangles.
+    """Find optimal association for images for the groups of covering
+    rectangles.
 
     >>> gbp = get_best_parts
     >>> gbp([[Rectangle(0, 0, 100, 100)]],
@@ -187,7 +188,8 @@ def get_best_parts(groups, images, ratio_score=100, scale_score=60, wallpaper_sc
     best_association = None
     best_score = 0
     for group in groups:
-        associations = [tuple(zip(group, p)) for p in itertools.permutations(images)]
+        associations = [tuple(zip(group, p))
+                        for p in itertools.permutations(images)]
         seen = []
         for association in associations:
             if association in seen:
@@ -319,7 +321,7 @@ if __name__ == "__main__":
         outputs, background = get_outputs()
         candidates = get_covering_rectangles(outputs)
         images = get_random_images(
-            options.directory, len(outputs) + options.extra_images
+            options.directory, len(outputs) + int(options.extra_images)
         )
         wallpaper_parts = get_best_parts(
             candidates,
@@ -331,7 +333,7 @@ if __name__ == "__main__":
         for part in wallpaper_parts:
             logger.info(
                 "wallpaper: {} ({}×{})".format(
-                    part.image.filename[(len(options.directory) + 1) :],
+                    part.image.filename[(len(options.directory) + 1):],
                     *part.image.size
                 )
             )
