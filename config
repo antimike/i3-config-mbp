@@ -286,7 +286,6 @@ bindsym $mod+r mode "resize"
 mode "locked" {
 # Empty: we want *all* i3 keybinds to be disabled when the screen is locked, and obviously defining a keybind to return to normal mode would defeat the point.
 # This mode is only accessible through IPC.
-    bindsym $mod+n mode "default"
 }
 
 # split in horizontal orientation
