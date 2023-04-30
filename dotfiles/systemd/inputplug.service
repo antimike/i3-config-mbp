@@ -1,8 +1,0 @@
-[Unit]
-Description=XInput event monitor
-PartOf=graphical-session.target
-
-[Service]
-ExecStartPre=/usr/bin/setxkbmap us
-ExecStart=/usr/bin/inputplug -d -0 -c %h/.config/i3/bin/input-event
-Restart=on-failure
