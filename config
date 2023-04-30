@@ -399,8 +399,7 @@ for_window [window_role="PictureInPicture"] floating enable
 # i3-altlayout: Automatically optimizes split aspect ratios
 exec --no-startup-id "i3altlayout"
 
-# Picom
-exec_always --no-startup-id picom
+exec_always --no-startup-id ~/.xsession
 
 # Guake autoload
 exec_always --no-startup-id guake
@@ -414,17 +413,7 @@ bindsym $mod+t nop kitty_media
 exec_always --no-startup-id $kitty_launcher notes --i3 -n kitty_notepad -p CC -s 0.75 0.75
 bindsym $mod+Shift+n nop kitty_notepad
 
-# Wallpaper
-# exec_always --no-startup-id ~/.config/i3/bin/set-background.bash
-# exec_always --no-startup-id ~/.fehbg &
-# exec_always --no-startup-id ~/.config/i3/bin/set-lightdm-background.bash
-bindsym $mod+Shift+w exec ~/.config/i3/bin/set-background.bash
-
-# Polybar autoload
-# TODO: Make this Suck Less (TM) by replacing the sed bs in pywal.sh with dynamically-sourced colors in polybar config
-exec_always --no-startup-id ~/.config/polybar/launch.sh --cuts
-exec_always --no-startup-id ~/.config/polybar/cuts/scripts/pywal.sh
-exec_always --no-startup-id ~/.config/i3/bin/set-lockscreen.bash
+bindsym $mod+Shift+w exec systemctl --user start wallpaper.service
 
 # Move window to scratchpad
 bindsym $mod+Ctrl+x move window scratchpad

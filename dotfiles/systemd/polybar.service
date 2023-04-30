@@ -1,6 +1,9 @@
 [Unit]
 Description=Status bar for i3
 PartOf=graphical-session.target
+# Ensure that polybar is reloaded when autorandr runs
+# Not sure if I should use this or autorandr hooks
+# PartOf=autorandr.service
 
 [Service]
 Type=notify

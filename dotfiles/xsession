@@ -22,4 +22,4 @@ dconf <"$HOME/.config/i3/dotfiles/dconf.ini" load /
 # Services are started with systemd
 systemctl --user import-environment
 systemctl --user daemon-reload
-exec systemctl --user start --wait i3.service
+exec systemctl --user start --wait i3-session.target
