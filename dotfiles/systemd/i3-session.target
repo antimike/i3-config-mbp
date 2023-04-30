@@ -6,5 +6,4 @@ Wants=wallpaper.timer
 Wants=polybar-weather.service
 Wants=polybar-weather.timer
 Wants=polybar.service
-Wants=i3-companion.service
 Wants=misc-x.service
