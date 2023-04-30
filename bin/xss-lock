@@ -6,6 +6,10 @@ notify=$((timeout / 30))
 
 op="$1"
 
+if [[ -z "$op" ]]; then
+	op="start"
+fi
+
 configure() {
 	xset s $((timeout - notify)) $notify
 	xset dpms $((timeout * 2)) $((timeout * 22 / 10)) $((timeout * 24 / 10))
@@ -15,10 +19,25 @@ dimmer() {
 	systemctl --user "$op" xss-dimmer@${notify}.service
 }
 
+postlock() {
+	pactl -- set-sink-mute @DEFAULT_SINK@ off
+	pactl -- set-source-mute @DEFAULT_SOURCE@ off
+	dunstctl set-paused false
+	i3-msg "mode default"
+}
+
+prelock() {
+	i3-msg "mode locked"
+	playerctl -a pause
+	pactl -- set-sink-mute @DEFAULT_SINK@ on
+	pactl -- set-source-mute @DEFAULT_SOURCE@ on
+	dunstctl set-paused true
+}
+
 case "$op" in
 start)
 	configure
-	exec xss-lock --session="${XDG_SESSION_ID}" --notifier="$me notify" --transfer-sleep-lock "$me" lock
+	exec xss-lock --notifier="$me notify" --transfer-sleep-lock "$me" lock
 	;;
 dim | notify)
 	echo "notify: start"
@@ -33,11 +52,10 @@ lock)
 	echo "lock: lock screen"
 	# Something may have meddled with screensaver settings
 	configure
-	# Pause music player and notifications
-	playerctl -a pause
-	dunstctl set-paused true
-	# Then, lock screen
-	loginctl lock-session
+	# Lock screen
+	prelock
+	betterlockscreen -l dim
+	postlock
 	# Alternative if we prefer videos:
 	# XSECURELOCK_SAVER=saver_mpv
 	# XSECURELOCK_LIST_VIDEOS_COMMAND="ls -1 ~/.config/i3/wallpapers/*.mp4"
@@ -45,6 +63,5 @@ lock)
 	echo "lock: unlock screen"
 	# After unlocking screen, stop dimmer, restore notifications
 	dimmer stop
-	dunstctl set-paused false
 	;;
 esac
