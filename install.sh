@@ -21,6 +21,7 @@ gtkrc-2.0    .gtkrc-2.0
 gtk3.css     .config/gtk-3.0/gtk.css
 qt5ct.conf   .config/qt5ct/qt5ct.conf
 systemd      .config/systemd/user
+xsession     .xsession
 EOF
 
 # Not sure why the following line would be useful...
