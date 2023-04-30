@@ -3,7 +3,7 @@ Description=Build and display wallpaper
 PartOf=graphical-session.target
 
 [Service]
-Environment=WALLPAPER_DIRECTORY=%h/.config/i3/wallpapers
+Environment=WALLPAPER_DIRECTORY=%h/.local/share/wallpapers/Wallpapers
 Environment=WALLPAPER_OUTPUT=%h/.cache/i3/current-wallpaper.png
 ExecStart=/usr/bin/mkdir -p %h/.cache/i3
 ExecStart=%h/.config/i3/bin/wallpaper --directory $WALLPAPER_DIRECTORY \
