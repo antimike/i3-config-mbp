@@ -17,7 +17,6 @@ set_from_resource $border_size i3wm.border_size 3
 set_from_resource $floating_border i3wm.floating_border_size 2
 set_from_resource $minimal_border i3wm.minimal_border_size 1
 set_from_resource $corner_radius i3wm.corner_radius 10
-set_from_resource $dpi Xft.dpi 227
 set_from_resource $icons i3wm.icons Papirus-Dark
 
 for_window [tiling] border pixel 0
@@ -225,12 +224,11 @@ bindsym $mod+Return exec $term
 bindsym $mod+Shift+q kill
 
 # execute command
-set $rofi rofi -dpi $dpi -icon-theme $icons -window-thumbnail -show-icons -drun-match-fields name
+set $rofi rofi -icon-theme $icons -window-thumbnail -show-icons -drun-match-fields name
 set $rofi_open_opts -theme docu -modi drun -show drun
 set $rofi_find_opts -theme fancy -modi window -show window -window-thumbnail
 bindsym $mod+o      exec --no-startup-id $rofi $rofi_open_opts
 bindsym XF86LaunchA exec --no-startup-id $rofi $rofi_find_opts
-bindsym $mod+Shift+d exec --no-startup-id $rofi $rofi_open_opts
 
 # change focus
 bindsym $mod+$left  focus left
@@ -370,18 +368,14 @@ bindsym $mod+Shift+o  move workspace to output right
 bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
 
-# xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
-# screen before suspend. Use loginctl lock-session to lock your screen.
-set $lock_command betterlockscreen -l dim
-exec --no-startup-id xss-lock --transfer-sleep-lock -- $lock_command
 bindsym $mod+Escape exec "loginctl lock-session"
 
 # exit i3 (logs you out of your X session)
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
 bindsym $mod+Shift+Ctrl+e exec "i3-msg exit"
 
-# bindsym Print exec --no-startup-id exec ~/.config/i3/bin/screenshot window
-# bindsym $mod+Print exec --no-startup-id exec ~/.config/i3/bin/screenshot desktop
+bindsym Print exec --no-startup-id exec ~/.config/i3/bin/screenshot window
+bindsym $mod+Print exec --no-startup-id exec ~/.config/i3/bin/screenshot desktop
 
 # Get info about container/workspace
 bindsym $mod+i nop "container-info"

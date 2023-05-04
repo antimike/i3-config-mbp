@@ -49,7 +49,7 @@ dim | notify)
 	echo "notify: end"
 	;;
 lock)
-	echo "lock: lock screen"
+	echo "lock: lock screen" >&2
 	# Something may have meddled with screensaver settings
 	configure
 	# Lock screen
@@ -60,7 +60,7 @@ lock)
 	# XSECURELOCK_SAVER=saver_mpv
 	# XSECURELOCK_LIST_VIDEOS_COMMAND="ls -1 ~/.config/i3/wallpapers/*.mp4"
 	# xsecurelock
-	echo "lock: unlock screen"
+	echo "lock: unlock screen" >&2
 	# After unlocking screen, stop dimmer, restore notifications
 	dimmer stop
 	;;

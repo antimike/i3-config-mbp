@@ -35,14 +35,15 @@ def get_location():
 def get_weather(apikey, latitude, longitude):
     """Return data from openweathermap."""
     logger.debug("query openweathermap for %s, %s", latitude, longitude)
+    logger.debug(
+        f"Using API key {apikey}, environ OWM_API_KEY={os.environ.get('OWM_API_KEY')}"
+    )
     r = requests.get(
-        f"https://api.openweathermap.org/data/2.5/onecall",
+        f"https://api.openweathermap.org/data/2.5/weather",
         params={
             "appid": apikey,
             "lat": latitude,
             "lon": longitude,
-            "units": "metric",
-            "exclude": "minutely,hourly",
         },
     )
     r.raise_for_status()

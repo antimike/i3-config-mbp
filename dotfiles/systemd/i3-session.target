@@ -7,3 +7,5 @@ Wants=polybar-weather.service
 Wants=polybar-weather.timer
 Wants=polybar.service
 Wants=misc-x.service
+wants=xsession.target
+After=xsession.target
