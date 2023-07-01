@@ -3,6 +3,7 @@
 /* TODO: implement vi-like keybindings */
 /* https://gist.github.com/avsej/459731 */
 
+/* emacs bindings */
 @binding-set custom-text-entry
 {
   bind "<alt>b" { "move-cursor" (words, -1, 0) };
@@ -29,7 +30,7 @@
                          "insert-at-cursor" (" ")  };
 }
 
-entry, textview
-{
-  -gtk-key-bindings: custom-text-entry;
-}
+/* entry, textview */
+/* { */
+/*   -gtk-key-bindings: custom-text-entry; */
+/* } */

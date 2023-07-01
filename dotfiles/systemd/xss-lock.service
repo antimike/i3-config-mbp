@@ -1,7 +1,0 @@
-[Unit]
-Description=Manage X screen saver
-PartOf=graphical-session.target
-
-[Service]
-ExecStart=%h/.config/i3/bin/xss-lock start
-Restart=on-failure

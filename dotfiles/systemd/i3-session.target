@@ -1,11 +1,11 @@
 [Unit]
 Description=i3 session
-BindsTo=graphical-session.target
+PartOf=graphical-session.target
 Wants=wallpaper.service
 Wants=wallpaper.timer
 Wants=polybar-weather.service
 Wants=polybar-weather.timer
 Wants=polybar.service
 Wants=misc-x.service
-wants=xsession.target
+Wants=xsession.target
 After=xsession.target

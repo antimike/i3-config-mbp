@@ -284,6 +284,8 @@ bindsym $mod+r mode "resize"
 mode "locked" {
 # Empty: we want *all* i3 keybinds to be disabled when the screen is locked, and obviously defining a keybind to return to normal mode would defeat the point.
 # This mode is only accessible through IPC.
+# EDIT: It seems that i3 doesn't like empty modes, so the following is included to make sure this mode actually exists
+    bindsym Return mode "locked"
 }
 
 # split in horizontal orientation
@@ -394,6 +396,7 @@ for_window [window_role="PictureInPicture"] floating enable
 exec --no-startup-id "i3altlayout"
 
 exec_always --no-startup-id ~/.xsession
+exec_always --no-startup-id ~/.config/i3/bin/xss-lock start
 
 # Guake autoload
 exec_always --no-startup-id guake
